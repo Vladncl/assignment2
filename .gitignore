@@ -1,0 +1,359 @@
+public class PizzaBase {
+
+	private double price;
+	private String thickness;
+
+	public PizzaBase() {
+
+	}
+
+	public PizzaBase(String thickness) {
+		this.thickness = thickness;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getPrice() {
+		if (thickness.toLowerCase().equalsIgnoreCase("thick")) {
+			setPrice(3);
+		}
+		if (thickness.toLowerCase().equalsIgnoreCase("thin")) {
+			setPrice(2);
+		}
+		return price;
+	}
+	
+	public String getBase(){
+		return thickness;
+	}
+
+}
+
+***********************************************************************
+
+public class PizzaTopping {
+
+	private boolean isVegetarian;
+	private double price;
+
+	public PizzaTopping(boolean Vegetarian, double p) {
+		isVegetarian = Vegetarian;
+		price = p;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public boolean getVegetarian() {
+		return isVegetarian;
+	}
+
+}
+
+***********************************************************************
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Pizza {
+
+	private double totalprice;
+	private boolean isVegetarian = true;
+
+	Map<PizzaTopping, Double> toppingList = new HashMap<PizzaTopping, Double>();
+
+	PizzaBase base = new PizzaBase();
+
+	public Pizza() {
+
+	}
+
+	public boolean getVegetarian() {
+		for (PizzaTopping e : toppingList.keySet()) {
+			int val = 0;
+			if (e.getVegetarian() == false) {
+				val++;
+			}
+
+			if (val > 0) {
+				isVegetarian = false;
+			}
+
+		}
+		return isVegetarian;
+
+	}
+
+	public String setVegetarian() {
+		if (getVegetarian() == true) {
+			return String.format("Suitable for vegetarians.");
+		} else {
+			return String.format("Not suitable for vegetarians.");
+		}
+	}
+
+	public double getPrice() {
+		double toppingPrice = 0;
+		for (double a : toppingList.values()) {
+			toppingPrice += a;
+		}
+		totalprice = toppingPrice + base.getPrice();
+		return totalprice;
+
+	}
+
+}
+
+***********************************************************************
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class PizzaBuild {
+
+	public static void main(String[] args) {
+
+		Pizza myPizza = new Pizza();
+
+		PizzaBase base = new PizzaBase("thick");
+
+		PizzaTopping cheese = new PizzaTopping(false, 0.1);
+		PizzaTopping tomatoes = new PizzaTopping(true, 0.2);
+		PizzaTopping chicken = new PizzaTopping(false, 0.5);
+		PizzaTopping mushrooms = new PizzaTopping(true, 0.3);
+		PizzaTopping turkey = new PizzaTopping(false, 1);
+
+		Map<PizzaTopping, Double> pizzaTopping = new HashMap<PizzaTopping, Double>();
+
+		pizzaTopping.put(cheese, cheese.getPrice());
+		pizzaTopping.put(tomatoes, tomatoes.getPrice());
+		pizzaTopping.put(chicken, chicken.getPrice());
+		pizzaTopping.put(mushrooms, mushrooms.getPrice());
+		pizzaTopping.put(turkey, turkey.getPrice());
+		
+
+		myPizza.toppingList = pizzaTopping;
+		myPizza.base = base;
+
+		System.out.println("Pizza's price: " + myPizza.getPrice() + '\n'
+				+ "Vegetarian status: " + myPizza.setVegetarian());
+	}
+}
+
+***********************************************************************
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class PizzaChoice {
+
+	public static void main(String[] args) {
+
+		Map<String, Double> toppings = new HashMap<String, Double>();
+
+		Scanner scan = new Scanner(System.in);
+
+		Pizza myPizza = new Pizza();
+
+		PizzaBase thin = new PizzaBase("thin");
+		PizzaBase thick = new PizzaBase("thick");
+
+		PizzaTopping cheese = new PizzaTopping(false, 0.1);
+		PizzaTopping tomatoes = new PizzaTopping(true, 0.2);
+		PizzaTopping chicken = new PizzaTopping(false, 0.5);
+		PizzaTopping mushrooms = new PizzaTopping(true, 0.3);
+
+		Map<PizzaTopping, Double> toppingList = new HashMap<PizzaTopping, Double>();
+		toppingList.put(cheese, cheese.getPrice());
+		toppingList.put(tomatoes, tomatoes.getPrice());
+		toppingList.put(chicken, chicken.getPrice());
+		toppingList.put(mushrooms, mushrooms.getPrice());
+
+		Map<String, PizzaTopping> toppingMenu = new HashMap<String, PizzaTopping>();
+		toppingMenu.put("cheese", cheese);
+		toppingMenu.put("tomatoes", tomatoes);
+		toppingMenu.put("chicken", chicken);
+		toppingMenu.put("mushrooms", mushrooms);
+
+		for (String topping : toppingMenu.keySet()) {
+			System.out.println("Would you like some " + topping
+					+ " on your pizza?");
+			String input = scan.nextLine();
+			if (input.toLowerCase().equalsIgnoreCase("yes")) {
+				toppings.put(topping, toppingMenu.get(topping).getPrice());
+				myPizza.toppingList.put(toppingMenu.get(topping), toppingMenu
+						.get(topping).getPrice());
+			}
+		}
+
+		System.out
+				.println("Would you like a thin base or a thick base? (Just type in thick or thin)");
+		String input = scan.nextLine();
+		if (input.toLowerCase().equalsIgnoreCase("thin")) {
+			myPizza.base = thin;
+		}
+		if (input.toLowerCase().equalsIgnoreCase("thick")) {
+			myPizza.base = thick;
+		}
+		System.out.println('\n' + "Selected toppings: ");
+		for (String e : toppings.keySet()) {
+			System.out.println(e + ": " + toppings.get(e) + "£");
+		}
+
+		System.out
+				.println('\n' + "Selected Base" + '\n' + myPizza.base.getBase()
+						+ ": " + myPizza.base.getPrice() + "£");
+
+		System.out.println('\n' + "Total price: " + myPizza.getPrice() + "£");
+
+	}
+}
+
+***********************************************************************
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class PizzaMenu {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+
+		String[] myPizzas = { "Americano", "Capriciosa", "Europeano",
+				"Vegetarianos" };
+
+		Pizza myAmericano = new Pizza();
+		Pizza myCapriciosa = new Pizza();
+		Pizza myEuropeano = new Pizza();
+		Pizza myVegetarianos = new Pizza();
+
+		PizzaBase thick = new PizzaBase("thick");
+		PizzaBase thin = new PizzaBase("thin");
+
+		PizzaTopping sausages = new PizzaTopping(false, 0.5);
+		PizzaTopping peppers = new PizzaTopping(true, 0.2);
+		PizzaTopping corn = new PizzaTopping(true, 0.1);
+		PizzaTopping mushrooms = new PizzaTopping(true, 0.2);
+		PizzaTopping tomatoes = new PizzaTopping(true, 0.4);
+		PizzaTopping chicken = new PizzaTopping(false, 1);
+		PizzaTopping turkey = new PizzaTopping(false, 2);
+		PizzaTopping ham = new PizzaTopping(false, 0.5);
+
+		Map<PizzaTopping, String> toppingList = new HashMap<PizzaTopping, String>();
+		toppingList.put(sausages, "sausages");
+		toppingList.put(peppers, "peppers");
+		toppingList.put(corn, "corn");
+		toppingList.put(mushrooms, "mushrooms");
+		toppingList.put(tomatoes, "tomatoes");
+		toppingList.put(chicken, "chicken");
+		toppingList.put(turkey, "turkey");
+		toppingList.put(ham, "ham");
+
+		Map<PizzaTopping, Double> americano = new HashMap<PizzaTopping, Double>();
+		americano.put(sausages, sausages.getPrice());
+		americano.put(mushrooms, mushrooms.getPrice());
+		americano.put(ham, ham.getPrice());
+		americano.put(peppers, peppers.getPrice());
+
+		Map<PizzaTopping, Double> capriciosa = new HashMap<PizzaTopping, Double>();
+		capriciosa.put(chicken, chicken.getPrice());
+		capriciosa.put(tomatoes, tomatoes.getPrice());
+		capriciosa.put(corn, corn.getPrice());
+		capriciosa.put(mushrooms, mushrooms.getPrice());
+
+		Map<PizzaTopping, Double> europeano = new HashMap<PizzaTopping, Double>();
+		europeano.put(turkey, turkey.getPrice());
+		europeano.put(tomatoes, tomatoes.getPrice());
+		europeano.put(peppers, peppers.getPrice());
+		europeano.put(corn, corn.getPrice());
+
+		Map<PizzaTopping, Double> vegetarianos = new HashMap<PizzaTopping, Double>();
+		vegetarianos.put(tomatoes, tomatoes.getPrice());
+		vegetarianos.put(corn, corn.getPrice());
+		vegetarianos.put(mushrooms, mushrooms.getPrice());
+		vegetarianos.put(peppers, peppers.getPrice());
+
+		myAmericano.toppingList = americano;
+		myCapriciosa.toppingList = capriciosa;
+		myEuropeano.toppingList = europeano;
+		myVegetarianos.toppingList = vegetarianos;
+
+		myAmericano.base = thin;
+		myCapriciosa.base = thick;
+		myEuropeano.base = thick;
+		myVegetarianos.base = thin;
+
+		System.out
+				.println("Please type in the name of the preferred pizza: " + '\n');
+		for (String a : myPizzas) {
+			System.out.println(a);
+		}
+
+		String input = scan.nextLine();
+		if (input.toLowerCase().equalsIgnoreCase("americano")) {
+			System.out.println('\n' + "Included ingridients: ");
+			for (PizzaTopping topping : americano.keySet()) {
+				System.out.println(toppingList.get(topping) + ": "
+						+ topping.getPrice() + "£");
+			}
+			System.out.println('\n' + "Included base: " + '\n'
+					+ myAmericano.base.getBase() + ": "
+					+ myAmericano.base.getPrice() + "£" + '\n');
+
+			System.out.println("Total price: " + myAmericano.getPrice() + "£");
+			System.out.println(myAmericano.setVegetarian());
+
+		}
+		if (input.toLowerCase().equalsIgnoreCase("capriciosa")) {
+			System.out.println('\n' + "Included ingredients: ");
+			for (PizzaTopping topping : capriciosa.keySet()) {
+				System.out.println(toppingList.get(topping) + ": "
+						+ topping.getPrice() + "£");
+
+			}
+			System.out.println('\n' + "Included base: " + '\n'
+					+ myCapriciosa.base.getBase() + ": "
+					+ myCapriciosa.base.getPrice() + "£" + '\n');
+
+			System.out.println("Total price: " + myCapriciosa.getPrice() + "£");
+
+			System.out.println(myCapriciosa.setVegetarian());
+
+		}
+		if (input.toLowerCase().equalsIgnoreCase("europeano")) {
+			System.out.println('\n' + "Included ingridients: ");
+			for (PizzaTopping topping : europeano.keySet()) {
+				System.out.println(toppingList.get(topping) + ": "
+						+ topping.getPrice() + "£");
+			}
+			System.out.println('\n' + "Included base: " + '\n'
+					+ myEuropeano.base.getBase() + ": "
+					+ myEuropeano.base.getPrice() + "£" + '\n');
+
+			System.out.println("Total price: " + myEuropeano.getPrice() + "£");
+			System.out.println(myEuropeano.setVegetarian());
+
+		}
+		if (input.toLowerCase().equalsIgnoreCase("vegetarianos")) {
+			System.out.println('\n' + "Included ingridients: ");
+			for (PizzaTopping topping : vegetarianos.keySet()) {
+				System.out.println(toppingList.get(topping) + ": "
+						+ topping.getPrice() + "£");
+			}
+			System.out.println('\n' + "Included base: " + '\n'
+					+ myVegetarianos.base.getBase() + ": "
+					+ myVegetarianos.base.getPrice() + "£" + '\n');
+
+			System.out.println("Total price: " + myVegetarianos.getPrice()
+					+ "£");
+			System.out.println(myVegetarianos.setVegetarian());
+		}
+	}
+}
+
